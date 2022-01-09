@@ -2,6 +2,7 @@ package com.fahrul.cuaca_fahrul.adapter;
 
 import android.content.Context;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.CardView;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -11,10 +12,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 
 import com.fahrul.cuaca_fahrul.R;
-import com.fahrul.cuaca_fahrul.model.Cuaca;
 import com.fahrul.cuaca_fahrul.model.Daily;
-import com.fahrul.cuaca_fahrul.model.List;
-import com.fahrul.cuaca_fahrul.model.Weather;
 import com.squareup.picasso.Picasso;
 
 import java.text.DecimalFormat;
@@ -58,12 +56,13 @@ public class AdapterCuaca extends RecyclerView.Adapter<AdapterCuaca.ViewHolder> 
         String trx = new SimpleDateFormat("yyyy-MM-dd", Locale.getDefault()).format(new Date(data.get(i).getDt()*1000));
 
         if(tr.equals(trx)){
-            viewHolder.parentLayout.setVisibility(View.VISIBLE);
+            viewHolder.parentLayout.setVisibility(View.GONE);
+            viewHolder.crItems.setVisibility(View.GONE);
         }
         viewHolder.txtLokasi.setText(lokasi);
         viewHolder.txtCuaca.setText(data.get(i).getWeather().get(0).getDescription());
         viewHolder.txtSuhu.setText(new DecimalFormat("##.##").format(data.get(i).getTemp().getDay()));
-        viewHolder.txtTanggal.setText(tr);
+        viewHolder.txtTanggal.setText(trx);
         String image = "https://openweathermap.org/img/wn/"+ data.get(i).getWeather().get(0).getIcon()+"@2x.png";
         Picasso.get().load(image).into(viewHolder.image);
 
@@ -76,9 +75,10 @@ public class AdapterCuaca extends RecyclerView.Adapter<AdapterCuaca.ViewHolder> 
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
-        public TextView txtSuhu,txtLokasi,txtCuaca,txtTanggal;
-        public ImageView image;
-        public LinearLayout parentLayout;
+        private TextView txtSuhu,txtLokasi,txtCuaca,txtTanggal;
+        private ImageView image;
+        private CardView crItems;
+        private LinearLayout parentLayout;
         public ViewHolder(@NonNull View itemView) {
             super(itemView);
             txtLokasi = (TextView) itemView.findViewById(R.id.txtLokasi);
@@ -87,6 +87,7 @@ public class AdapterCuaca extends RecyclerView.Adapter<AdapterCuaca.ViewHolder> 
             txtTanggal = (TextView) itemView.findViewById(R.id.txtTgl);
             image = (ImageView)itemView.findViewById(R.id.image);
             parentLayout = (LinearLayout)itemView.findViewById(R.id.lyCuaca);
+            crItems = (CardView)itemView.findViewById(R.id.crItem);
 
 
         }

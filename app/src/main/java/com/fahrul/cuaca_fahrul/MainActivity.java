@@ -28,6 +28,8 @@ import java.text.DateFormat;
 import java.text.DecimalFormat;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.Locale;
@@ -78,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
         lstCuaca.setHasFixedSize(true);
 
 
-
+        callForecastbyCity(kota);
 
         callMain(lat,lon);
 
@@ -113,9 +115,9 @@ public class MainActivity extends AppCompatActivity {
     public void callForecastbyCity(String kota){
 
         apiInterface = APIClient.getClient().create(APIInterfacesRest.class);
-        progressDialog = new ProgressDialog(MainActivity.this);
-        progressDialog.setTitle("Loading");
-        progressDialog.show();
+//        progressDialog = new ProgressDialog(MainActivity.this);
+//        progressDialog.setTitle("Loading");
+//        progressDialog.show();
         Call<Cuacaone> call3 = apiInterface.getForecastByCity(kota,"a66247bf847d4ef1b04e0357c9291521");
         call3.enqueue(new Callback<Cuacaone>() {
             @Override
@@ -134,6 +136,37 @@ public class MainActivity extends AppCompatActivity {
 //                    lstCuaca.setLayoutManager(new LinearLayoutManager(MainActivity.this));
 //                    lstCuaca.setItemAnimator(new DefaultItemAnimator());
 //                    lstCuaca.setAdapter(adapter);
+
+
+                    String date = "yyyy-MM-dd H:mm";
+                    Date  crr = Calendar.getInstance().getTime();
+                    String tr = new SimpleDateFormat(date).format(crr);
+
+
+
+                    for(int i = 0 ; i < dataWeather.getList().size(); i++){
+                      String trx =  dataWeather.getList().get(i).getDtTxt();
+                      DateFormat formatter = new SimpleDateFormat(date,Locale.getDefault());
+                        try {
+                            Date today = formatter.parse(tr);
+                            Date dtx =  formatter.parse(trx);
+                            if(dtx.before(today)){
+                                txLLokasi.setText(kota);
+                                txSuhu.setText(new DecimalFormat("##.##").format(dataWeather.getList().get(i).getMain().getTemp()-273.15));
+                                txCuaca.setText(dataWeather.getList().get(i).getWeather().get(0).getDescription());
+                                txTgl.setText(trx);
+                                String image = "https://openweathermap.org/img/wn/"+ dataWeather.getList().get(i).getWeather().get(0).getIcon()+"@2x.png";
+                                Picasso.get().load(image).into(images);
+                            }
+
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+
+
+
+                    }
 
                      lat = dataWeather.getCity().getCoord().getLat();
                      lon = dataWeather.getCity().getCoord().getLon();
@@ -225,26 +258,26 @@ public class MainActivity extends AppCompatActivity {
                 if (dataWeather !=null) {
 
 
-                    String date = "yyyy-MM-dd";
-                    Date  crr = Calendar.getInstance().getTime();
-                    String tr = new SimpleDateFormat(date).format(crr);
-
-
-
-                    for(int i = 0 ; i < dataWeather.getDaily().size(); i++){
-                        String trx = new SimpleDateFormat(date, Locale.getDefault()).format(new Date(dataWeather.getDaily().get(i).getDt()*1000));
-
-                        if(tr.equals(trx)){
-                            txLLokasi.setText(kota);
-                            txSuhu.setText(new DecimalFormat("##.##").format(dataWeather.getDaily().get(i).getTemp().getDay()));
-                            txCuaca.setText(dataWeather.getDaily().get(i).getWeather().get(i).getDescription());
-                            txTgl.setText(trx);
-                            String image = "https://openweathermap.org/img/wn/"+ dataWeather.getDaily().get(i).getWeather().get(0).getIcon()+"@2x.png";
-                            Picasso.get().load(image).into(images);
-                        }
-
-
-                    }
+//                    String date = "yyyy-MM-dd";
+//                    Date  crr = Calendar.getInstance().getTime();
+//                    String tr = new SimpleDateFormat(date).format(crr);
+//
+//
+//
+//                    for(int i = 0 ; i < dataWeather.getDaily().size(); i++){
+//                        String trx = new SimpleDateFormat(date, Locale.getDefault()).format(new Date(dataWeather.getDaily().get(i).getDt()*1000));
+//
+//                        if(tr.equals(trx)){
+//                            txLLokasi.setText(kota);
+//                            txSuhu.setText(new DecimalFormat("##.##").format(dataWeather.getDaily().get(i).getTemp().getDay()));
+//                            txCuaca.setText(dataWeather.getDaily().get(i).getWeather().get(i).getDescription());
+//                            txTgl.setText(trx);
+//                            String image = "https://openweathermap.org/img/wn/"+ dataWeather.getDaily().get(i).getWeather().get(0).getIcon()+"@2x.png";
+//                            Picasso.get().load(image).into(images);
+//                        }
+//
+//
+//                    }
 
                     AdapterCuaca adapter = new AdapterCuaca(MainActivity.this,dataWeather.getDaily(),kota);
 

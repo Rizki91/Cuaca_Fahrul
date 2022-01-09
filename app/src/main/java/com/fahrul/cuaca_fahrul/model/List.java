@@ -4,7 +4,7 @@ package com.fahrul.cuaca_fahrul.model;
 import java.io.Serializable;
 import android.os.Parcel;
 import android.os.Parcelable;
-
+import android.os.Parcelable.Creator;
 import com.google.gson.annotations.Expose;
 import com.google.gson.annotations.SerializedName;
 
@@ -17,9 +17,9 @@ public class List implements Serializable, Parcelable
     @SerializedName("main")
     @Expose
     private Main main;
-    @SerializedName("weatherone")
+    @SerializedName("weather")
     @Expose
-    private java.util.List<Weatherone> weatherone = null;
+    private java.util.List<Weatherone> weather = null;
     @SerializedName("clouds")
     @Expose
     private Clouds clouds;
@@ -62,7 +62,7 @@ public class List implements Serializable, Parcelable
     protected List(Parcel in) {
         this.dt = ((Integer) in.readValue((Integer.class.getClassLoader())));
         this.main = ((Main) in.readValue((Main.class.getClassLoader())));
-        in.readList(this.weatherone, (Weatherone.class.getClassLoader()));
+        in.readList(this.weather, (Weather.class.getClassLoader()));
         this.clouds = ((Clouds) in.readValue((Clouds.class.getClassLoader())));
         this.wind = ((Wind) in.readValue((Wind.class.getClassLoader())));
         this.visibility = ((Integer) in.readValue((Integer.class.getClassLoader())));
@@ -86,17 +86,17 @@ public class List implements Serializable, Parcelable
      * @param rain
      * @param visibility
      * @param dtTxt
-     * @param weatherone
+     * @param weather
      * @param main
      * @param clouds
      * @param sys
      * @param wind
      */
-    public List(Integer dt, Main main, java.util.List<Weatherone> weatherone, Clouds clouds, Wind wind, Integer visibility, Double pop, Rain rain, Sys sys, String dtTxt) {
+    public List(Integer dt, Main main, java.util.List<Weatherone> weather, Clouds clouds, Wind wind, Integer visibility, Double pop, Rain rain, Sys sys, String dtTxt) {
         super();
         this.dt = dt;
         this.main = main;
-        this.weatherone = weatherone;
+        this.weather = weather;
         this.clouds = clouds;
         this.wind = wind;
         this.visibility = visibility;
@@ -123,11 +123,11 @@ public class List implements Serializable, Parcelable
     }
 
     public java.util.List<Weatherone> getWeather() {
-        return weatherone;
+        return weather;
     }
 
-    public void setWeather(java.util.List<Weatherone> weatherone) {
-        this.weatherone = weatherone;
+    public void setWeather(java.util.List<Weatherone> weather) {
+        this.weather = weather;
     }
 
     public Clouds getClouds() {
@@ -189,7 +189,7 @@ public class List implements Serializable, Parcelable
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeValue(dt);
         dest.writeValue(main);
-        dest.writeList(weatherone);
+        dest.writeList(weather);
         dest.writeValue(clouds);
         dest.writeValue(wind);
         dest.writeValue(visibility);
