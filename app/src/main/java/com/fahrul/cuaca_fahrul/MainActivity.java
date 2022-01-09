@@ -62,6 +62,7 @@ public class MainActivity extends AppCompatActivity {
         lat = geolocation.getLattitude();
         lon = geolocation.getLongitude();
         kota = geolocation.getState();
+        String k = geolocation.getState();
 
         lstCuaca = findViewById(R.id.ryList);
         txCuaca = findViewById(R.id.txCuaca);
@@ -82,13 +83,13 @@ public class MainActivity extends AppCompatActivity {
 
         callForecastbyCity(kota);
 
-        callMain(lat,lon);
+        callMain(k);
 
         search.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
             public boolean onQueryTextSubmit(String s) {
                 kota = s;
-                callForecastbyCity(kota);
+                callForecastbyCity(s);
 
                 return false;
             }
@@ -122,7 +123,7 @@ public class MainActivity extends AppCompatActivity {
         call3.enqueue(new Callback<Cuacaone>() {
             @Override
             public void onResponse(Call<Cuacaone> call, Response<Cuacaone> response) {
-                progressDialog.dismiss();
+//                progressDialog.dismiss();
                 Cuacaone dataWeather = response.body();
 
                 if (dataWeather !=null) {
@@ -137,36 +138,6 @@ public class MainActivity extends AppCompatActivity {
 //                    lstCuaca.setItemAnimator(new DefaultItemAnimator());
 //                    lstCuaca.setAdapter(adapter);
 
-
-                    String date = "yyyy-MM-dd H:mm";
-                    Date  crr = Calendar.getInstance().getTime();
-                    String tr = new SimpleDateFormat(date).format(crr);
-
-
-
-                    for(int i = 0 ; i < dataWeather.getList().size(); i++){
-                      String trx =  dataWeather.getList().get(i).getDtTxt();
-                      DateFormat formatter = new SimpleDateFormat(date,Locale.getDefault());
-                        try {
-                            Date today = formatter.parse(tr);
-                            Date dtx =  formatter.parse(trx);
-                            if(dtx.before(today)){
-                                txLLokasi.setText(kota);
-                                txSuhu.setText(new DecimalFormat("##.##").format(dataWeather.getList().get(i).getMain().getTemp()-273.15));
-                                txCuaca.setText(dataWeather.getList().get(i).getWeather().get(0).getDescription());
-                                txTgl.setText(trx);
-                                String image = "https://openweathermap.org/img/wn/"+ dataWeather.getList().get(i).getWeather().get(0).getIcon()+"@2x.png";
-                                Picasso.get().load(image).into(images);
-                            }
-
-                        } catch (ParseException e) {
-                            e.printStackTrace();
-                        }
-
-
-
-
-                    }
 
                      lat = dataWeather.getCity().getCoord().getLat();
                      lon = dataWeather.getCity().getCoord().getLon();
@@ -242,49 +213,58 @@ public class MainActivity extends AppCompatActivity {
         });
     }
 
-    public void callMain(Double lat,Double lon){
+    public void callMain(String kota){
 
         apiInterface = APIClient.getClient().create(APIInterfacesRest.class);
-        progressDialog = new ProgressDialog(MainActivity.this);
-        progressDialog.setTitle("Loading");
-        progressDialog.show();
-        Call<Cuaca> call3 = apiInterface.getForecastBylatlon(lat,lon,"current,hourly,minutely,alerts","metric","a66247bf847d4ef1b04e0357c9291521");
-        call3.enqueue(new Callback<Cuaca>() {
+//        progressDialog = new ProgressDialog(MainActivity.this);
+//        progressDialog.setTitle("Loading");
+//        progressDialog.show();
+        Call<Cuacaone> call3 = apiInterface.getForecastByCity(kota,"a66247bf847d4ef1b04e0357c9291521");
+        call3.enqueue(new Callback<Cuacaone>() {
             @Override
-            public void onResponse(Call<Cuaca> call, Response<Cuaca> response) {
-                progressDialog.dismiss();
-                Cuaca dataWeather = response.body();
-                //Toast.makeText(LoginActivity.this,userList.getToken().toString(),Toast.LENGTH_LONG).show();
+            public void onResponse(Call<Cuacaone> call, Response<Cuacaone> response) {
+                //progressDialog.dismiss();
+                Cuacaone dataWeather = response.body();
+
                 if (dataWeather !=null) {
 
+                    //     txtKota.setText(dataWeather.getName());
+                    //     txtTemperature.setText(new DecimalFormat("##.##").format(dataWeather.getMain().getTemp()-273.15));
 
-//                    String date = "yyyy-MM-dd";
-//                    Date  crr = Calendar.getInstance().getTime();
-//                    String tr = new SimpleDateFormat(date).format(crr);
+//                    AdapterCuaca adapter = new AdapterCuaca(MainActivity.this,dataWeather.getList(),dataWeather.getCity().getName());
 //
 //
-//
-//                    for(int i = 0 ; i < dataWeather.getDaily().size(); i++){
-//                        String trx = new SimpleDateFormat(date, Locale.getDefault()).format(new Date(dataWeather.getDaily().get(i).getDt()*1000));
-//
-//                        if(tr.equals(trx)){
-//                            txLLokasi.setText(kota);
-//                            txSuhu.setText(new DecimalFormat("##.##").format(dataWeather.getDaily().get(i).getTemp().getDay()));
-//                            txCuaca.setText(dataWeather.getDaily().get(i).getWeather().get(i).getDescription());
-//                            txTgl.setText(trx);
-//                            String image = "https://openweathermap.org/img/wn/"+ dataWeather.getDaily().get(i).getWeather().get(0).getIcon()+"@2x.png";
-//                            Picasso.get().load(image).into(images);
-//                        }
-//
-//
-//                    }
-
-                    AdapterCuaca adapter = new AdapterCuaca(MainActivity.this,dataWeather.getDaily(),kota);
+//                    lstCuaca.setLayoutManager(new LinearLayoutManager(MainActivity.this));
+//                    lstCuaca.setItemAnimator(new DefaultItemAnimator());
+//                    lstCuaca.setAdapter(adapter);
 
 
-                    lstCuaca.setLayoutManager(new LinearLayoutManager(MainActivity.this));
-                    lstCuaca.setItemAnimator(new DefaultItemAnimator());
-                    lstCuaca.setAdapter(adapter);
+                    String date = "yyyy-MM-dd H:mm";
+                    Date  crr = Calendar.getInstance().getTime();
+                    String tr = new SimpleDateFormat(date).format(crr);
+
+
+
+                    for(int i = 0 ; i < dataWeather.getList().size(); i++){
+                        String trx =  dataWeather.getList().get(i).getDtTxt();
+                        DateFormat formatter = new SimpleDateFormat(date,Locale.getDefault());
+                        try {
+                            Date today = formatter.parse(tr);
+                            Date dtx =  formatter.parse(trx);
+                            if(dtx.before(today)){
+                                txLLokasi.setText(kota);
+                                txSuhu.setText(new DecimalFormat("##.##").format(dataWeather.getList().get(i).getMain().getTemp()-273.15));
+                                txCuaca.setText(dataWeather.getList().get(i).getWeather().get(0).getDescription());
+                                txTgl.setText(trx);
+                                String image = "https://openweathermap.org/img/wn/"+ dataWeather.getList().get(i).getWeather().get(0).getIcon()+"@2x.png";
+                                Picasso.get().load(image).into(images);
+                            }
+
+                        } catch (ParseException e) {
+                            e.printStackTrace();
+                        }
+
+                    }
 
 
                 }else{
@@ -299,7 +279,7 @@ public class MainActivity extends AppCompatActivity {
             }
 
             @Override
-            public void onFailure(Call<Cuaca> call, Throwable t) {
+            public void onFailure(Call<Cuacaone> call, Throwable t) {
                 progressDialog.dismiss();
                 Toast.makeText(getApplicationContext(),"Maaf koneksi bermasalah",Toast.LENGTH_LONG).show();
                 call.cancel();
